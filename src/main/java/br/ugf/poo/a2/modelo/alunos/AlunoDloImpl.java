@@ -1,12 +1,11 @@
 package br.ugf.poo.a2.modelo.alunos;
 
+import java.util.List;
+
 import br.ugf.poo.a2.modelo.excecoes.ExcecaoDao;
 import br.ugf.poo.a2.modelo.excecoes.ExcecaoDlo;
 import br.ugf.poo.a2.modelo.excecoes.ExcecaoPersistenciaDlo;
 import br.ugf.poo.a2.modelo.excecoes.ExcecaoValidacaoDlo;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -67,7 +66,7 @@ public class AlunoDloImpl implements AlunoDlo {
             if (maior == null || aluno.getNotaA2().compareTo(maior) > 0) {
                 menor = maior;
                 maior = aluno.getNotaA2();
-                
+
             } else if (menor == null || aluno.getNotaA2().compareTo(menor) > 0) {
                 menor = aluno.getNotaA2();
             }
@@ -79,7 +78,7 @@ public class AlunoDloImpl implements AlunoDlo {
             if (maior == null || aluno.getNotaA3().compareTo(maior) > 0) {
                 menor = maior;
                 maior = aluno.getNotaA3();
-                
+
             } else if (menor == null || aluno.getNotaA3().compareTo(menor) > 0) {
                 menor = aluno.getNotaA3();
             }
@@ -142,25 +141,25 @@ public class AlunoDloImpl implements AlunoDlo {
             if (aluno.getMedia() != null) {
                 if (mediaTurma.compareTo(aluno.getMedia()) >= 0) {
                     totalAlunosAcima++;
-                    
+
                 } else {
                     totalAlunosAbaixo++;
                 }
             }
-            
+
             if (aluno.getSituacao() == SituacaoAluno.Aprovado) {
                 totalAlunosAprovados++;
             }
-            
+
             if (aluno.getSituacao() == SituacaoAluno.Reprovado) {
                 totalAlunosReprovados++;
             }
-            
+
             if (aluno.getSituacao() == SituacaoAluno.ProvaFinal) {
                 totalAlunosProvaFinal++;
             }
         }
-        
+
         retorno.setQtdAlunos(alunos.size());
         retorno.setMedia(mediaTurma);
         retorno.setQtdAlunosComMedia(totalAlunosComMedia);
@@ -169,7 +168,7 @@ public class AlunoDloImpl implements AlunoDlo {
         retorno.setQtdAlunosAprovados(totalAlunosAprovados);
         retorno.setQtdAlunosReprovados(totalAlunosReprovados);
         retorno.setQtdAlunosProvaFinal(totalAlunosProvaFinal);
-        
+
         return retorno;
     }
 
@@ -196,11 +195,11 @@ public class AlunoDloImpl implements AlunoDlo {
                     + " ao definir as avaliações '" + avaliacao.getTitulo() + "'"
                     + " de todos os alunos com a nota '" + nota + "'.", ex);
         }
-        
+
         List<Aluno> alunos = listar();
-        
+
         for (Aluno aluno : alunos) {
-            
+
             calcularSituacao(aluno);
             alterar(aluno);
         }

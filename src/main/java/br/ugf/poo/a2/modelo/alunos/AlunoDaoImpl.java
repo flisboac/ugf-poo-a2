@@ -1,7 +1,5 @@
 package br.ugf.poo.a2.modelo.alunos;
 
-import br.ugf.poo.a2.modelo.excecoes.ExcecaoDao;
-import br.ugf.poo.a2.modelo.util.JdbcUtil;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,7 +8,9 @@ import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
+import br.ugf.poo.a2.modelo.excecoes.ExcecaoDao;
+import br.ugf.poo.a2.modelo.util.JdbcUtil;
 
 /**
  * Implementação de {@link AlunoDao}.
@@ -20,13 +20,13 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 public class AlunoDaoImpl implements AlunoDao {
 
     private Connection connection;
-    
+
     public AlunoDaoImpl() {}
-    
+
     public AlunoDaoImpl(Connection conexao) {
         this.connection = conexao;
     }
-    
+
     public static void criarTabela() throws SQLException {
 
         boolean existe = false;
@@ -69,7 +69,7 @@ public class AlunoDaoImpl implements AlunoDao {
     }
 
     public static void criarCargaInicial(AlunoDaoImpl alunoDao, int numeroAlunos) throws ExcecaoDao {
-        
+
         for (int i = 0; i < numeroAlunos; i++) {
             Aluno aluno = new Aluno();
             aluno.setMatricula(String.format("%011d", i));
@@ -81,7 +81,7 @@ public class AlunoDaoImpl implements AlunoDao {
             alunoDao.inserir(aluno);
         }
     }
-    
+
     protected Connection criarConexao() throws ExcecaoDao {
         Connection con = this.connection;
 
@@ -93,12 +93,12 @@ public class AlunoDaoImpl implements AlunoDao {
                 throw new ExcecaoDao("Não foi possível criar uma nova conexão com o banco de dados.");
             }
         }
-        
+
         return con;
     }
 
     protected void fecharConexao(Connection con) {
-        
+
         if (this.connection == null) {
             JdbcUtil.fecharConexao(con);
         }
@@ -137,49 +137,49 @@ public class AlunoDaoImpl implements AlunoDao {
         ps.setString(2, aluno.getNome());
         ps.setString(3, aluno.getRg());
         ps.setInt(4, aluno.getSituacao().getCodigo());
-        
+
         if (aluno.getNotaA1() == null) {
             ps.setNull(5, Types.DOUBLE);
-            
+
         } else {
             ps.setDouble(5, aluno.getNotaA1());
         }
-        
+
         if (aluno.getNotaA2() == null) {
             ps.setNull(6, Types.DOUBLE);
-            
+
         } else {
             ps.setDouble(6, aluno.getNotaA2());
         }
-        
+
         if (aluno.getNotaA3() == null) {
             ps.setNull(7, Types.DOUBLE);
-            
+
         } else {
             ps.setDouble(7, aluno.getNotaA3());
         }
-        
+
         if (aluno.getMedia() == null) {
             ps.setNull(8, Types.DOUBLE);
-            
+
         } else {
             ps.setDouble(8, aluno.getMedia());
         }
-        
+
         return ps;
     }
-    
+
     @Override
     public void definirNotasPorAvaliacao(Avaliacao avaliacao, Double nota) throws ExcecaoDao {
-        
+
         Connection con = criarConexao();
-        
+
         try {
             String sql = "update aluno set \n"
                     + "  aluno_med = null"
                     + ", aluno_sit = ?"
                     + ", " + avaliacao.getCampo() + " = ?";
-                    
+
             PreparedStatement stmt = con.prepareStatement(sql);
             stmt.setInt(1, SituacaoAluno.Nenhuma.getCodigo());
             stmt.setDouble(2, nota);
@@ -195,7 +195,7 @@ public class AlunoDaoImpl implements AlunoDao {
             fecharConexao(con);
         }
     }
-    
+
     @Override
     public Aluno obterPorId(Long id) throws ExcecaoDao {
 
@@ -287,13 +287,13 @@ public class AlunoDaoImpl implements AlunoDao {
                     + " , aluno_med \n"
                     + ") values (?, ?, ?, ?, ?, ?, ?, ?)"
                     + " returning aluno_id";
-            
+
             PreparedStatement ps = con.prepareStatement(sql);
             ResultSet rs = preencherParaPersistencia(aluno, ps).executeQuery();
-            
+
             if (rs.next()) {
                 retorno = rs.getLong("aluno_id");
-                
+
             } else {
                 throw new ExcecaoDao("Nenhuma entidade afetada no banco de dados.");
             }
@@ -304,10 +304,10 @@ public class AlunoDaoImpl implements AlunoDao {
         } finally {
             fecharConexao(con);
         }
-        
+
         return retorno;
     }
-    
+
     @Override
     public void alterar(Aluno aluno) throws ExcecaoDao {
 
@@ -324,10 +324,10 @@ public class AlunoDaoImpl implements AlunoDao {
                     + " , aluno_a3 = ? \n"
                     + " , aluno_med = ? \n"
                     + " where aluno_id = ?";
-            
+
             PreparedStatement ps = con.prepareStatement(sql);
             preencherParaPersistencia(aluno, ps).setLong(9, aluno.getId());
-            
+
             if (ps.executeUpdate() <= 0) {
                 throw new ExcecaoDao("Nenhuma entidade afetada no banco de dados.");
             }
@@ -342,16 +342,16 @@ public class AlunoDaoImpl implements AlunoDao {
 
     @Override
     public void excluir(Aluno aluno) throws ExcecaoDao {
-        
+
         Connection con = criarConexao();
-        
+
         try {
             String sql = "delete from aluno \n"
                     + " where aluno_matr = ?";
-            
+
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, aluno.getMatricula());
-            
+
             if (ps.executeUpdate() <= 0) {
                 throw new ExcecaoDao("Nenhuma entidade afetada no banco de dados.");
             }
@@ -367,14 +367,14 @@ public class AlunoDaoImpl implements AlunoDao {
     @Override
     public void excluirPorId(Long id) throws ExcecaoDao {
         Connection con = criarConexao();
-        
+
         try {
             String sql = "delete from aluno \n"
                     + " where aluno_id = ?";
-            
+
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setLong(1, id);
-            
+
             if (ps.executeUpdate() <= 0) {
                 throw new ExcecaoDao("Nenhuma entidade afetada no banco de dados.");
             }
@@ -392,15 +392,15 @@ public class AlunoDaoImpl implements AlunoDao {
 
         boolean retorno = false;
         Connection con = criarConexao();
-        
+
         try {
             String sql = "select 1 from aluno \n"
                     + " where aluno_matr = ?";
-            
+
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setString(1, aluno.getMatricula());
             ResultSet rs = ps.executeQuery();
-            
+
             if (rs.next()) {
                 retorno = true;
             }
@@ -411,7 +411,7 @@ public class AlunoDaoImpl implements AlunoDao {
         } finally {
             fecharConexao(con);
         }
-        
+
         return retorno;
     }
 
@@ -420,15 +420,15 @@ public class AlunoDaoImpl implements AlunoDao {
 
         boolean retorno = false;
         Connection con = criarConexao();
-        
+
         try {
             String sql = "select 1 from aluno \n"
                     + " where aluno_id = ?";
-            
+
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setLong(1, id);
             ResultSet rs = ps.executeQuery();
-            
+
             if (rs.next()) {
                 retorno = true;
             }
@@ -439,13 +439,13 @@ public class AlunoDaoImpl implements AlunoDao {
         } finally {
             fecharConexao(con);
         }
-        
+
         return retorno;
     }
-    
+
     @Override
     public List<Aluno> listar() throws ExcecaoDao {
-        
+
         List<Aluno> retorno = null;
         Connection con = criarConexao();
         try {
@@ -478,7 +478,7 @@ public class AlunoDaoImpl implements AlunoDao {
 
         return retorno;
     }
-    
+
     @Override
     public List<Aluno> listarPorSituacao(SituacaoAluno situacao) throws ExcecaoDao {
 
@@ -516,7 +516,7 @@ public class AlunoDaoImpl implements AlunoDao {
 
         return retorno;
     }
-    
+
     @Override
     public List<Aluno> listarPorParteDoNome(String parteDoNome) throws ExcecaoDao {
 
@@ -554,10 +554,10 @@ public class AlunoDaoImpl implements AlunoDao {
 
         return retorno;
     }
-    
+
     @Override
     public EstatisticaTurma gerarEstatisticaTurma() throws ExcecaoDao {
-        
-        throw new NotImplementedException();
+
+        throw new ExcecaoDao("Não implementado");
     }
 }

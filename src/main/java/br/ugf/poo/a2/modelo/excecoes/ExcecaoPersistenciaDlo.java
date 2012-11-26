@@ -10,18 +10,20 @@ package br.ugf.poo.a2.modelo.excecoes;
  * @author flisboac
  */
 public class ExcecaoPersistenciaDlo extends ExcecaoDlo {
-    
-    public ExcecaoPersistenciaDlo() {
+
+	private static final long serialVersionUID = 3089565777284312316L;
+
+	public ExcecaoPersistenciaDlo() {
     }
-    
+
     public ExcecaoPersistenciaDlo(String msg) {
         super(msg);
     }
-    
+
     public ExcecaoPersistenciaDlo(Throwable ex) {
         super(ex);
     }
-    
+
     public ExcecaoPersistenciaDlo(String msg, Throwable ex) {
         super(msg, ex);
     }

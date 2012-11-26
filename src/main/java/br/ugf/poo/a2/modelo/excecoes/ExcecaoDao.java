@@ -6,18 +6,20 @@ package br.ugf.poo.a2.modelo.excecoes;
  * @author flisboac
  */
 public class ExcecaoDao extends Excecao {
-    
-    public ExcecaoDao() {
+
+	private static final long serialVersionUID = -3804968923585345783L;
+
+	public ExcecaoDao() {
     }
-    
+
     public ExcecaoDao(String msg) {
         super(msg);
     }
-    
+
     public ExcecaoDao(Throwable ex) {
         super(ex);
     }
-    
+
     public ExcecaoDao(String msg, Throwable ex) {
         super(msg, ex);
     }
